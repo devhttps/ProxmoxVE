@@ -1,0 +1,219 @@
+# ProxmoxVE Helper-Scripts - Project Intelligence
+
+## Project Overview
+This is a comprehensive platform for Proxmox VE management consisting of:
+- **Backend**: Go API with MongoDB for data collection
+- **Frontend**: Next.js 15 + React 19 + Tailwind CSS
+- **Scripts**: 300+ Bash scripts for Proxmox VE automation
+- **Community**: Active open-source project maintained by community
+
+## Critical Implementation Patterns
+
+### Backend API Patterns
+- **Data Model**: MongoDB collection `data_models` with structured schema
+- **Endpoints**: RESTful API with specific patterns:
+  - `/upload` - POST for new installation data
+  - `/data/paginated` - GET with pagination support
+  - `/data/summary` - GET for aggregated statistics
+  - `/data/nsapp` - GET filtered by application
+- **Error Handling**: Graceful error responses with proper HTTP status codes
+- **CORS**: Configured for cross-origin requests
+
+### Frontend Architecture Patterns
+- **App Router**: Next.js 15 with modern routing
+- **State Management**: TanStack Query + nuqs for URL state
+- **UI Components**: Radix UI primitives with Tailwind CSS
+- **Charts**: Chart.js with react-chartjs-2 for data visualization
+- **Theme**: Dark/light mode with next-themes
+
+### Script Development Patterns
+- **Core Functions**: Centralized utilities in `misc/core.func`
+- **Error Handling**: `trap` statements for cleanup and error reporting
+- **API Integration**: `post_update_to_api` for tracking installations
+- **UI**: whiptail for interactive menus
+- **Progress**: Visual feedback with spinners and status messages
+
+## Key Technical Decisions
+
+### Why Go for Backend?
+- High performance for API endpoints
+- Excellent concurrency support
+- Simple deployment (single binary)
+- Strong ecosystem for web services
+
+### Why MongoDB?
+- Flexible schema for varied installation data
+- Good performance for analytics queries
+- Easy horizontal scaling if needed
+- JSON-native data format
+
+### Why Next.js for Frontend?
+- Server-side rendering for performance
+- Static generation for GitHub Pages
+- Excellent developer experience
+- Strong ecosystem and community
+
+### Why Bash for Scripts?
+- Native on Proxmox VE systems
+- No additional dependencies
+- Direct system integration
+- Familiar to sysadmins
+
+## Project-Specific Patterns
+
+### Script Structure Pattern
+```bash
+#!/usr/bin/env bash
+# Copyright header
+source /dev/stdin <<<$(curl -fsSL https://raw.githubusercontent.com/.../core.func)
+# Header info function
+# Variable definitions
+# Error handling setup
+# Main logic
+# Cleanup functions
+```
+
+### API Data Flow Pattern
+1. Script executes installation
+2. Posts progress to `/upload` endpoint
+3. Updates status via `/upload/updatestatus`
+4. Frontend queries `/data/paginated` for display
+5. Analytics generated from `/data/summary`
+
+### Frontend Component Pattern
+```typescript
+"use client";
+import { useState, useEffect } from "react";
+// Component logic
+// API calls with TanStack Query
+// Error handling
+// Loading states
+```
+
+## User Workflow Preferences
+
+### Installation Workflow
+1. User visits website
+2. Browses script catalog
+3. Copies installation command
+4. Executes on Proxmox VE
+5. Script provides real-time feedback
+6. Data is tracked in dashboard
+
+### Development Workflow
+1. Create script following established patterns
+2. Test on development Proxmox instance
+3. Submit pull request
+4. Community review and approval
+5. Integration into platform
+
+## Known Challenges and Solutions
+
+### Challenge: Script Error Handling
+**Solution**: Comprehensive trap statements with cleanup functions
+```bash
+trap 'error_handler $LINENO "$BASH_COMMAND"' ERR
+trap cleanup EXIT
+```
+
+### Challenge: Cross-Origin API Access
+**Solution**: CORS configuration in Go backend
+```go
+c := cors.New(cors.Options{
+    AllowedOrigins: []string{"*"},
+    AllowedMethods: []string{"GET", "POST"},
+})
+```
+
+### Challenge: Responsive Design
+**Solution**: Tailwind CSS with mobile-first approach
+```typescript
+className="flex flex-col gap-4 sm:flex-row sm:gap-2"
+```
+
+## Performance Considerations
+
+### Frontend Performance
+- Static generation where possible
+- Image optimization with Next.js
+- Lazy loading for heavy components
+- Tailwind CSS for minimal bundle size
+
+### Backend Performance
+- Connection pooling for MongoDB
+- Pagination for large datasets
+- Timeout handling for long operations
+- Efficient Go memory management
+
+### Script Performance
+- Parallel downloads where possible
+- Progress indicators for long operations
+- Efficient error handling
+- Resource cleanup on failure
+
+## Security Patterns
+
+### API Security
+- CORS configured for specific origins
+- Input validation on all endpoints
+- No authentication (public metrics only)
+- Structured error responses
+
+### Script Security
+- Downloads from trusted GitHub sources
+- Validation of system requirements
+- Limited execution privileges
+- Automatic cleanup on failure
+
+## Evolution Patterns
+
+### Version Management
+- Semantic versioning for releases
+- Detailed changelog maintenance
+- Backward compatibility considerations
+- Community contribution guidelines
+
+### Technology Updates
+- Regular dependency updates
+- Modern framework adoption
+- Performance optimization
+- Security patch application
+
+## Development Guidelines
+
+### Code Style
+- Consistent formatting across all components
+- Comprehensive error handling
+- Clear variable naming
+- Adequate commenting
+
+### Testing Approach
+- Manual testing on Proxmox instances
+- Community validation of scripts
+- API endpoint testing
+- Frontend component testing
+
+### Documentation Standards
+- README with clear installation instructions
+- Changelog with detailed change descriptions
+- Security policy with vulnerability reporting
+- Memory bank for technical context
+
+## Common Pitfalls to Avoid
+
+1. **Script Dependencies**: Always check for required packages
+2. **Error Cleanup**: Ensure proper cleanup on script failure
+3. **API Validation**: Validate all input data
+4. **Mobile Responsiveness**: Test on various screen sizes
+5. **Performance**: Monitor bundle size and API response times
+
+## Success Patterns
+
+1. **Modular Architecture**: Clear separation of concerns
+2. **Error Handling**: Comprehensive error management
+3. **User Feedback**: Clear progress indicators
+4. **Community Engagement**: Active contribution process
+5. **Documentation**: Well-maintained guides and references
+
+This project represents a mature, well-architected platform that successfully serves the Proxmox VE community with automation tools and data insights.
+
